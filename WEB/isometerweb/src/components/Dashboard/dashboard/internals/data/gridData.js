@@ -75,53 +75,55 @@ export function renderAvatar(params) {
 }
 
 export const columns = [
-  { field: 'pageTitle', headerName: 'Page Title', flex: 1.5, minWidth: 200 },
+  { field: 'id', headerName: 'ID', flex: 0.1, minWidth: 100 },
+  {
+    field: 'deviceId',
+    headerName: 'ID Universal',
+    headerAlign: 'left',
+    align: 'right',
+    flex: 0.5,
+    minWidth: 100,
+  },
   {
     field: 'status',
-    headerName: 'Status',
+    headerName: 'Estado',
     flex: 0.5,
-    minWidth: 80,
+    minWidth: 100,
     renderCell: (params) => renderStatus(params.value),
   },
+  
   {
-    field: 'users',
-    headerName: 'Users',
-    headerAlign: 'right',
+    field: 'temperature',
+    headerName: 'Temperatura',
+    headerAlign: 'left',
     align: 'right',
-    flex: 1,
-    minWidth: 80,
-  },
-  {
-    field: 'eventCount',
-    headerName: 'Event Count',
-    headerAlign: 'right',
-    align: 'right',
-    flex: 1,
+    flex: 0.5,
     minWidth: 100,
   },
   {
-    field: 'viewsPerUser',
-    headerName: 'Views per User',
-    headerAlign: 'right',
+    field: 'humidity',
+    headerName: 'Humedad',
+    headerAlign: 'left',
     align: 'right',
-    flex: 1,
-    minWidth: 120,
-  },
-  {
-    field: 'averageTime',
-    headerName: 'Average Time',
-    headerAlign: 'right',
-    align: 'right',
-    flex: 1,
+    flex: 0.5,
     minWidth: 100,
   },
-  {
-    field: 'conversions',
-    headerName: 'Daily Conversions',
-    flex: 1,
-    minWidth: 150,
-    renderCell: renderSparklineCell,
-  },
+  
+  // {
+  //   field: 'averageTime',
+  //   headerName: 'Average Time',
+  //   headerAlign: 'right',
+  //   align: 'right',
+  //   flex: 1,
+  //   minWidth: 100,
+  // },
+  // {
+  //   field: 'conversions',
+  //   headerName: 'Daily Conversions',
+  //   flex: 1,
+  //   minWidth: 150,
+  //   renderCell: renderSparklineCell,
+  // },
 ];
 
 export const rows = [

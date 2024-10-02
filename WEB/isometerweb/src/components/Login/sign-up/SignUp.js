@@ -155,7 +155,7 @@ export default function SignUp() {
               variant="h4"
               sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
             >
-              Sign up
+              Registrarse
             </Typography>
             <Box
               component="form"
@@ -163,14 +163,28 @@ export default function SignUp() {
               sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
             >
               <FormControl>
-                <FormLabel htmlFor="name">Full name</FormLabel>
+                <FormLabel htmlFor="name">Nombre</FormLabel>
                 <TextField
                   autoComplete="name"
                   name="name"
                   required
                   fullWidth
                   id="name"
-                  placeholder="Jon Snow"
+                  placeholder="Jon"
+                  error={nameError}
+                  helperText={nameErrorMessage}
+                  color={nameError ? 'error' : 'primary'}
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel htmlFor="surname">Apellido</FormLabel>
+                <TextField
+                  autoComplete="name"
+                  name="surname"
+                  required
+                  fullWidth
+                  id="surname"
+                  placeholder="Snow"
                   error={nameError}
                   helperText={nameErrorMessage}
                   color={nameError ? 'error' : 'primary'}
@@ -192,7 +206,7 @@ export default function SignUp() {
                 />
               </FormControl>
               <FormControl>
-                <FormLabel htmlFor="password">Password</FormLabel>
+                <FormLabel htmlFor="password">Contraseña</FormLabel>
                 <TextField
                   required
                   fullWidth
@@ -207,32 +221,32 @@ export default function SignUp() {
                   color={passwordError ? 'error' : 'primary'}
                 />
               </FormControl>
-              <FormControlLabel
+              {/* <FormControlLabel
                 control={<Checkbox value="allowExtraEmails" color="primary" />}
                 label="I want to receive updates via email."
-              />
+              /> */}
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 onClick={validateInputs}
               >
-                Sign up
+                Registrarse
               </Button>
               <Typography sx={{ textAlign: 'center' }}>
-                Already have an account?{' '}
+                ¿Ya tenés una cuenta?{' '}
                 <span>
                   <Link
-                    href="/material-ui/getting-started/templates/sign-in/"
+                    href="/login"
                     variant="body2"
                     sx={{ alignSelf: 'center' }}
                   >
-                    Sign in
+                    Iniciar Sesión
                   </Link>
                 </span>
               </Typography>
             </Box>
-            <Divider>
+            {/* <Divider>
               <Typography sx={{ color: 'text.secondary' }}>or</Typography>
             </Divider>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -252,7 +266,7 @@ export default function SignUp() {
               >
                 Sign up with Facebook
               </Button>
-            </Box>
+            </Box> */}
           </Card>
         </SignUpContainer>
       </ThemeProvider>

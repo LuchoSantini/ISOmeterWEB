@@ -53,7 +53,7 @@ export default function SessionsChart() {
     <Card variant="outlined" sx={{ width: '100%' }}>
       <CardContent>
         <Typography component="h2" variant="subtitle2" gutterBottom>
-          Sessions
+          Mediciones
         </Typography>
         <Stack sx={{ justifyContent: 'space-between' }}>
           <Stack
@@ -64,13 +64,13 @@ export default function SessionsChart() {
               gap: 1,
             }}
           >
-            <Typography variant="h4" component="p">
+            {/* <Typography variant="h4" component="p">
               13,277
             </Typography>
-            <Chip size="small" color="success" label="+35%" />
+            <Chip size="small" color="success" label="+35%" /> */}
           </Stack>
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-            Sessions per day for the last 30 days
+            Intervalo temperatura - humedad
           </Typography>
         </Stack>
         <LineChart

@@ -5,6 +5,9 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AppTheme from "../src/components/Dashboard/shared-theme/AppTheme"
 import Dashboard from "./components/Dashboard/dashboard/Dashboard"
 import SignIn from "./components/Login/sign-in/SignIn"
+import SignUp from "./components/Login/sign-up/SignUp"
+// SignInSide -> Uso comercial
+//import SignInSide from "./components/Login/sign-in-side/SignInSide"
 import { Box } from '@mui/material';
 const App = () => {
   return (
@@ -21,7 +24,13 @@ const App = () => {
               }
             />
             <Route
-              path="/admin/productos"
+              path="/register"
+              element={
+                <SignUp />
+              }
+            />
+            <Route
+              path="/home"
               element={
                 <ThemeProvider theme={AppTheme}>
                   <Dashboard />

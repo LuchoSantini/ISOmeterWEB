@@ -12,6 +12,7 @@ import PageViewsBarChart from './PageViewsBarChart';
 import SessionsChart from './SessionsChart';
 import StatCard from './StatCard';
 
+// Usar esta data para mapear cada Device
 const data = [
   {
     title: 'Users',
@@ -43,6 +44,7 @@ const data = [
       520, 410, 530, 520, 610, 530, 520, 610, 530, 420, 510, 430, 520, 510,
     ],
   },
+  
 ];
 
 export default function MainGrid() {
@@ -63,29 +65,35 @@ export default function MainGrid() {
             <StatCard {...card} />
           </Grid>
         ))}
-        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+        {/* <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <HighlightedCard />
-        </Grid>
-        <Grid size={{ sm: 12, md: 6 }}>
+        </Grid> */}
+        {/* <Grid size={{ sm: 12, md: 6 }}>
           <SessionsChart />
-        </Grid>
-        <Grid size={{ sm: 12, md: 6 }}>
+        </Grid> */}
+        {/* <Grid size={{ sm: 12, md: 6 }}>
           <PageViewsBarChart />
-        </Grid>
+        </Grid> */}
+      </Grid>
+      {/* Duplicada */}
+      {/* SessionsChart vendría a ser el intervalo temperatura/humedad */}
+      <Grid size={{ sm: 12, md: 6 }}>
+        <SessionsChart />
       </Grid>
       <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
         Details
       </Typography>
-      <Grid container spacing={2} columns={12}>
+      {/* <Grid container spacing={2} columns={12}> */}
+      <Grid>
         <Grid size={{ md: 12, lg: 9 }}>
           <CustomizedDataGrid />
         </Grid>
-        <Grid size={{ xs: 12, lg: 3 }}>
+        {/* <Grid size={{ xs: 12, lg: 3 }}>
           <Stack gap={2} direction={{ xs: 'column', sm: 'row', lg: 'column' }}>
             <CustomizedTreeView />
             <ChartUserByCountry />
           </Stack>
-        </Grid>
+        </Grid> */}
       </Grid>
       <Copyright sx={{ my: 4 }} />
     </Box>

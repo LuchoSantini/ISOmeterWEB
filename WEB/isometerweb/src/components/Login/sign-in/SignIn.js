@@ -184,10 +184,10 @@ export default function SignIn(props) {
                 color={passwordError ? 'error' : 'primary'}
               />
             </FormControl>
-            <FormControlLabel
+            {/* <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Recordarme"
-            />
+            /> */}
             <ForgotPassword open={open} handleClose={handleClose} />
             <Button
               type="submit"
@@ -198,14 +198,14 @@ export default function SignIn(props) {
               Iniciar Sesión
             </Button>
             <Typography sx={{ textAlign: 'center' }}>
-              No tienes una cuenta? {' '}
+              ¿No tienes una cuenta? {' '}
               <span>
                 <Link
-                  href="/material-ui/getting-started/templates/sign-in/"
+                  href="/register"
                   variant="body2"
                   sx={{ alignSelf: 'center' }}
                 >
-                  Registrate
+                  Registrarse
                 </Link>
               </span>
             </Typography>

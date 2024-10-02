@@ -94,7 +94,7 @@ function StatCard({ title, value, interval, trend, data }) {
               {interval}
             </Typography>
           </Stack>
-          <Box sx={{ width: '100%', height: 50 }}>
+          {/* <Box sx={{ width: '100%', height: 50 }}>
             <SparkLineChart
               colors={[chartColor]}
               data={data}
@@ -113,7 +113,7 @@ function StatCard({ title, value, interval, trend, data }) {
             >
               <AreaGradient color={chartColor} id={`area-gradient-${value}`} />
             </SparkLineChart>
-          </Box>
+          </Box> */}
         </Stack>
       </CardContent>
     </Card>
