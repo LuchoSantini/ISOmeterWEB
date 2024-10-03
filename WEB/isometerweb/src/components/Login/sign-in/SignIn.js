@@ -1,69 +1,151 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
-import CssBaseline from '@mui/material/CssBaseline';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Divider from '@mui/material/Divider';
-import FormLabel from '@mui/material/FormLabel';
-import FormControl from '@mui/material/FormControl';
-import Link from '@mui/material/Link';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
-import MuiCard from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
-import ForgotPassword from './ForgotPassword';
-import { GoogleIcon, FacebookIcon, SitemarkIcon } from './CustomIcons';
-import AppTheme from '../../Dashboard//shared-theme/AppTheme';
-import ColorModeSelect from '../../Dashboard/shared-theme/ColorModeSelect';
+import * as React from "react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
+import CssBaseline from "@mui/material/CssBaseline";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Divider from "@mui/material/Divider";
+import FormLabel from "@mui/material/FormLabel";
+import FormControl from "@mui/material/FormControl";
+import Link from "@mui/material/Link";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import Stack from "@mui/material/Stack";
+import MuiCard from "@mui/material/Card";
+import { styled } from "@mui/material/styles";
+import ForgotPassword from "./ForgotPassword";
+import { GoogleIcon, FacebookIcon, SitemarkIcon } from "./CustomIcons";
+import AppTheme from "../../Dashboard//shared-theme/AppTheme";
+import ColorModeSelect from "../../Dashboard/shared-theme/ColorModeSelect";
 
+import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { login } from "../../Api/ApiServices";
+import { CircularProgress } from "@mui/material";
 const Card = styled(MuiCard)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignSelf: 'center',
-  width: '100%',
+  display: "flex",
+  flexDirection: "column",
+  alignSelf: "center",
+  width: "100%",
   padding: theme.spacing(4),
   gap: theme.spacing(2),
-  margin: 'auto',
-  [theme.breakpoints.up('sm')]: {
-    maxWidth: '450px',
+  margin: "auto",
+  [theme.breakpoints.up("sm")]: {
+    maxWidth: "450px",
   },
   boxShadow:
-    'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
-  ...theme.applyStyles('dark', {
+    "hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px",
+  ...theme.applyStyles("dark", {
     boxShadow:
-      'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
+      "hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px",
   }),
 }));
 
 const SignInContainer = styled(Stack)(({ theme }) => ({
-  minHeight: '100%',
+  minHeight: "100%",
   padding: theme.spacing(2),
-  [theme.breakpoints.up('sm')]: {
+  [theme.breakpoints.up("sm")]: {
     padding: theme.spacing(4),
   },
-  '&::before': {
+  "&::before": {
     content: '""',
-    display: 'block',
-    position: 'absolute',
+    display: "block",
+    position: "absolute",
     zIndex: -1,
     inset: 0,
     backgroundImage:
-      'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
-    backgroundRepeat: 'no-repeat',
-    ...theme.applyStyles('dark', {
+      "radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))",
+    backgroundRepeat: "no-repeat",
+    ...theme.applyStyles("dark", {
       backgroundImage:
-        'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
+        "radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))",
     }),
   },
 }));
 
 export default function SignIn(props) {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false); // Estado para controlar si está cargando
+
+  const [errors, setErrors] = useState({
+    email: false,
+    password: false,
+  });
+
+  const handleEmailChange = (event) => {
+    const emailValue = event.target.value;
+    setEmail(emailValue);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      email: emailValue === "",
+    }));
+  };
+
+  const handlePasswordChange = (event) => {
+    const passwordValue = event.target.value;
+    setPassword(passwordValue);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      password: passwordValue === "",
+    }));
+  };
+
+  const [showRegisterForm, setShowRegisterForm] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const [alert, setAlert] = useState(null);
+
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+
+    if (isLoggedIn === "true") {
+      navigate("/home"); // Si el usuario está autenticado, redirige a /home
+    }
+  }, [navigate]);
+
+  const signInHandler = async (event) => {
+    event.preventDefault();
+
+    if (email === "" || password === "") {
+      setErrors({
+        email: email === "",
+        password: password === "",
+      });
+      return;
+    }
+    setLoading(true);
+
+    try {
+      const success = await login(email, password);
+
+      if (success) {
+        localStorage.setItem("isLoggedIn", "true");
+        navigate("/home");
+
+        console.log("Se ha iniciado sesión exitosamente");
+      } else {
+        setLoading(false);
+        setAlert({
+          type: "danger",
+          message:
+            "No existe una cuenta con ese correo electrónico o la contraseña es incorrecta",
+        });
+      }
+    } catch (error) {
+      console.error("Error de inicio de sesión:", error);
+      setAlert({
+        type: "danger",
+        message: "Ocurrió un error al iniciar sesión",
+      });
+    }
+  };
+
   const [emailError, setEmailError] = React.useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
+  const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
   const [passwordError, setPasswordError] = React.useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
+  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -81,33 +163,35 @@ export default function SignIn(props) {
     }
     const data = new FormData(event.currentTarget);
     console.log({
-      email: data.get('email'),
-      password: data.get('password'),
+      email: data.get("email"),
+      password: data.get("password"),
     });
   };
 
   const validateInputs = () => {
-    const email = document.getElementById('email');
-    const password = document.getElementById('password');
+    const email = document.getElementById("email");
+    const password = document.getElementById("password");
 
     let isValid = true;
 
     if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
       setEmailError(true);
-      setEmailErrorMessage('Por favor, ingresa una dirección de email válida.');
+      setEmailErrorMessage("Por favor, ingresa una dirección de email válida.");
       isValid = false;
     } else {
       setEmailError(false);
-      setEmailErrorMessage('');
+      setEmailErrorMessage("");
     }
 
     if (!password.value || password.value.length < 6) {
       setPasswordError(true);
-      setPasswordErrorMessage('La contraseña debe tener al menos 6 caracteres.');
+      setPasswordErrorMessage(
+        "La contraseña debe tener al menos 6 caracteres."
+      );
       isValid = false;
     } else {
       setPasswordError(false);
-      setPasswordErrorMessage('');
+      setPasswordErrorMessage("");
     }
 
     return isValid;
@@ -117,30 +201,41 @@ export default function SignIn(props) {
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
       <SignInContainer direction="column" justifyContent="space-between">
-        <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
+        <ColorModeSelect
+          sx={{ position: "fixed", top: "1rem", right: "1rem" }}
+        />
         <Card variant="outlined">
-          <SitemarkIcon />
+          <Box display="flex" justifyContent="center">
+            <img
+              style={{ width: 250 }}
+              src="/Logo-Consultar.png"
+              alt="Logo Consultar"
+            />
+          </Box>
           <Typography
             component="h1"
             variant="h4"
-            sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
+            sx={{ width: "100%", fontSize: "clamp(2rem, 10vw, 2.15rem)" }}
           >
             Iniciar Sesión
           </Typography>
           <Box
             component="form"
-            onSubmit={handleSubmit}
+            //onSubmit={handleSubmit}
+            onSubmit={signInHandler}
             noValidate
             sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              width: '100%',
+              display: "flex",
+              flexDirection: "column",
+              width: "100%",
               gap: 2,
             }}
           >
             <FormControl>
               <FormLabel htmlFor="email">Email</FormLabel>
               <TextField
+                value={email}
+                onChange={handleEmailChange}
                 error={emailError}
                 helperText={emailErrorMessage}
                 id="email"
@@ -152,12 +247,12 @@ export default function SignIn(props) {
                 required
                 fullWidth
                 variant="outlined"
-                color={emailError ? 'error' : 'primary'}
-                sx={{ ariaLabel: 'email' }}
+                color={emailError ? "error" : "primary"}
+                sx={{ ariaLabel: "email" }}
               />
             </FormControl>
             <FormControl>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <FormLabel htmlFor="password">Contraseña</FormLabel>
                 {/* <Link
                   component="button"
@@ -170,6 +265,8 @@ export default function SignIn(props) {
                 </Link> */}
               </Box>
               <TextField
+                value={password}
+                onChange={handlePasswordChange}
                 error={passwordError}
                 helperText={passwordErrorMessage}
                 name="password"
@@ -181,7 +278,7 @@ export default function SignIn(props) {
                 required
                 fullWidth
                 variant="outlined"
-                color={passwordError ? 'error' : 'primary'}
+                color={passwordError ? "error" : "primary"}
               />
             </FormControl>
             {/* <FormControlLabel
@@ -194,16 +291,17 @@ export default function SignIn(props) {
               fullWidth
               variant="contained"
               onClick={validateInputs}
+              disabled={loading} // Desactiva el botón mientras está cargando
             >
-              Iniciar Sesión
+              {loading ? <CircularProgress size={24} /> : "Iniciar Sesión"}
             </Button>
-            <Typography sx={{ textAlign: 'center' }}>
-              ¿No tienes una cuenta? {' '}
+            <Typography sx={{ textAlign: "center" }}>
+              ¿No tienes una cuenta?{" "}
               <span>
                 <Link
                   href="/register"
                   variant="body2"
-                  sx={{ alignSelf: 'center' }}
+                  sx={{ alignSelf: "center" }}
                 >
                   Registrarse
                 </Link>
