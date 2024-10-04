@@ -22,7 +22,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { login } from "../../Api/ApiServices";
 import { CircularProgress } from "@mui/material";
-const Card = styled(MuiCard)(({ theme }) => ({
+export const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignSelf: "center",
@@ -295,7 +295,8 @@ export default function SignIn(props) {
             >
               {loading ? <CircularProgress size={24} /> : "Iniciar Sesión"}
             </Button>
-            <Typography sx={{ textAlign: "center" }}>
+            {/* Registro */}
+            {/* <Typography sx={{ textAlign: "center" }}>
               ¿No tienes una cuenta?{" "}
               <span>
                 <Link
@@ -306,7 +307,7 @@ export default function SignIn(props) {
                   Registrarse
                 </Link>
               </span>
-            </Typography>
+            </Typography> */}
           </Box>
           {/* <Divider>or</Divider>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>

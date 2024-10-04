@@ -15,7 +15,8 @@ import StatCard from "./StatCard";
 
 import api from "../../../Api/Api";
 import { allDevices } from "../../../Api/ApiServices";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, IconButton } from "@mui/material";
+import { GridArrowDownwardIcon, GridSaveAltIcon } from "@mui/x-data-grid";
 
 // Usar esta data para mapear cada Device
 const data = [
@@ -77,6 +78,9 @@ export default function MainGrid() {
   return (
     <Box sx={{ width: "100%", maxWidth: { sm: "100%", md: "1700px" } }}>
       {/* cards */}
+      <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
+        Dispositivos
+      </Typography>
       {loading ? (
         <CircularProgress />
       ) : (
@@ -113,11 +117,18 @@ export default function MainGrid() {
         <SessionsChart />
       </Grid>
 
-      <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
-        Lista de Mediciones
-      </Typography>
+      <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
+        <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
+          Lista de Mediciones
+        </Typography>
+        {/* Agregar función de exportar */}
+        <IconButton>
+          <GridSaveAltIcon></GridSaveAltIcon>
+        </IconButton>
+      </Box>
+
       {/* <Grid container spacing={2} columns={12}> */}
-      <Grid>
+      <Grid mt={1}>
         <Grid size={{ md: 12, lg: 9 }}>
           <CustomizedDataGrid />
         </Grid>
