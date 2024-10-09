@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton"; // Importa IconButton de Material UI
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded"; // Importa el ícono de cerrar sesión
@@ -22,11 +22,13 @@ import {
   GridLoadIcon,
   GridMenuIcon,
 } from "@mui/x-data-grid";
-import { postDevice } from "../../../Api/ApiServices";
+import { allRooms, postDevice } from "../../../Api/ApiServices";
 import AppTheme from "../../shared-theme/AppTheme";
 import { Card } from "../../../Login/sign-in/SignIn";
 export default function Header() {
   const [openModal, setOpenModal] = useState(false);
+  const [gettedRoomId, setGettedRoomId] = useState(null);
+  const [rooms, setRooms] = useState([]);
   const handleOpen = () => setOpenModal(true);
   const handleClose = () => setOpenModal(false);
   const [loading, setLoading] = useState(false);
@@ -36,15 +38,22 @@ export default function Header() {
     name: "",
     model: "",
     description: "",
+    roomId: null,
   });
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleChangeDevice = (e) => {
+    const selectedRoomId = Number(e.target.value);
+    setFormData({ ...formData, roomId: selectedRoomId }); // Directly update formData
+    console.log("Room seleccionado:", selectedRoomId);
+  };
+
   const addDevice = async (e) => {
     setLoading(true);
-
+    e.preventDefault();
     try {
       const response = await postDevice(formData);
       setFormData({
@@ -52,6 +61,7 @@ export default function Header() {
         name: "",
         model: "",
         description: "",
+        roomId: "",
       });
       console.log(response);
       alert("Se ha agregado un dispositivo nuevo.");
@@ -61,6 +71,23 @@ export default function Header() {
       setLoading(false);
     }
   };
+
+  const fetchRooms = async () => {
+    setLoading(true);
+    try {
+      const roomsResponse = await allRooms();
+      setRooms(roomsResponse.data);
+      console.log(rooms.id);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRooms();
+  }, []);
 
   const navigate = useNavigate();
 
@@ -182,6 +209,25 @@ export default function Header() {
                   value={formData.description}
                   onChange={handleChange}
                 ></TextField>
+                <Typography id="modal-room" variant="h6" component="h2" mt={1}>
+                  Habitación
+                </Typography>
+                <TextField
+                  select
+                  type="number"
+                  id="room-input"
+                  label="Selecciona una habitación"
+                  name="room"
+                  fullWidth
+                  value={formData.roomId || ""}
+                  onChange={handleChangeDevice}
+                >
+                  {rooms?.map((room) => (
+                    <MenuItem key={room.id} value={room.id}>
+                      {room.name}
+                    </MenuItem>
+                  ))}
+                </TextField>
                 {/* <Typography id="modal-description" variant="h6" component="h2">
                   Usuario
                 </Typography>

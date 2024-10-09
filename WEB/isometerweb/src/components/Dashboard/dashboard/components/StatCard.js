@@ -2,6 +2,9 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useTheme } from "@mui/material/styles";
+import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
+import ToggleOffIcon from "@mui/icons-material/ToggleOff";
+import ToggleOnIcon from "@mui/icons-material/ToggleOn";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -11,24 +14,52 @@ import {
   Button,
   FormControl,
   IconButton,
+  MenuItem,
   Modal,
   TextField,
 } from "@mui/material";
 import {
   GridArrowUpwardIcon,
+  GridCheckCircleIcon,
   GridClearIcon,
+  GridColumnIcon,
   GridMenuIcon,
   GridMoreVertIcon,
+  GridViewStreamIcon,
+  GridVisibilityOffIcon,
 } from "@mui/x-data-grid";
+import OnlinePredictionIcon from "@mui/icons-material/OnlinePrediction";
 import {
+  allRooms,
   changeStatusDevice,
+  getDeviceStatus,
   postRandomData,
   putDevice,
 } from "../../../Api/ApiServices";
 
-function StatCard({ universalId, description, name, model, data, trend }) {
+function StatCard({ universalId, description, name, model, roomId, trend }) {
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [rooms, setRooms] = useState([]);
+  const [status, setStatus] = useState(); // Poner en true para simular
+
+  const fetchDeviceStatus = async () => {
+    try {
+      const response = await getDeviceStatus(universalId);
+      setStatus(response.data.status);
+      console.log("estado", response.data.status);
+    } catch (error) {
+      console.log("Error obteniendo estado del dispositivo:", error);
+    }
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchDeviceStatus();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [status]);
 
   // Estado para el formulario
   const [formData, setFormData] = useState({
@@ -36,6 +67,7 @@ function StatCard({ universalId, description, name, model, data, trend }) {
     name: "",
     model: "",
     description: "",
+    roomId: null,
   });
 
   const handleOpen = () => {
@@ -44,6 +76,7 @@ function StatCard({ universalId, description, name, model, data, trend }) {
       name,
       model,
       description,
+      roomId,
     });
     setOpenModal(true);
   };
@@ -52,6 +85,12 @@ function StatCard({ universalId, description, name, model, data, trend }) {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleChangeRoomId = (e) => {
+    const selectedRoomId = e.target.value;
+    setFormData({ ...formData, roomId: selectedRoomId }); // Directly update formData
+    console.log("Room ID seleccionado:", selectedRoomId);
   };
 
   const editDevice = async (e) => {
@@ -63,6 +102,7 @@ function StatCard({ universalId, description, name, model, data, trend }) {
         name: formData.name,
         model: formData.model,
         description: formData.description,
+        roomId: formData.roomId,
       };
       console.log(editedData);
       console.log(formData.universalId);
@@ -78,25 +118,6 @@ function StatCard({ universalId, description, name, model, data, trend }) {
     }
   };
 
-  const editDeviceStatus = async (e) => {
-    setLoading(true);
-    const statusToSend = {
-      status: false,
-    };
-
-    try {
-      console.log(universalId);
-      console.log(statusToSend);
-      const response = await changeStatusDevice(universalId, statusToSend);
-      console.log(response);
-      alert("Se dio de baja el dispositivo.");
-    } catch (error) {
-      console.log("Error al actualizar el dispositivo:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const addSimulatedData = async (e) => {
     try {
       const response = await postRandomData(universalId);
@@ -108,6 +129,23 @@ function StatCard({ universalId, description, name, model, data, trend }) {
       setLoading(false);
     }
   };
+
+  const fetchRooms = async () => {
+    setLoading(true);
+    try {
+      const roomsResponse = await allRooms();
+      setRooms(roomsResponse.data);
+      console.log(rooms.id);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRooms();
+  }, []);
 
   const theme = useTheme();
 
@@ -138,10 +176,18 @@ function StatCard({ universalId, description, name, model, data, trend }) {
   return (
     <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
       <CardContent>
-        <Typography component="h2" variant="subtitle2" gutterBottom>
-          {"ID: "}
-          {universalId}
-        </Typography>
+        <Box display="flex" justifyContent="space-between">
+          <Typography component="h2" variant="subtitle2" gutterBottom>
+            {"ID: "}
+            {universalId}
+          </Typography>
+          <Box sx={{ alignItems: "right" }}>
+            <OnlinePredictionIcon
+              color={status ? "success" : "error"}
+              sx={{ fontSize: 30 }}
+            />
+          </Box>
+        </Box>
 
         <Stack
           direction="column"
@@ -159,6 +205,7 @@ function StatCard({ universalId, description, name, model, data, trend }) {
             <Typography variant="caption" sx={{ color: "text.secondary" }}>
               {description}
             </Typography>
+
             <Box
               sx={{
                 display: "flex",
@@ -186,15 +233,8 @@ function StatCard({ universalId, description, name, model, data, trend }) {
                   sx={{ fontSize: 17, textAlign: "center" }}
                 />
               </IconButton>
-              <IconButton
-                onClick={editDeviceStatus}
-                sx={{ alignItems: "center" }}
-              >
-                <GridClearIcon
-                  color="error"
-                  aria-label="Eliminar dispositivo"
-                  sx={{ fontSize: 17 }}
-                />
+              <IconButton sx={{ alignItems: "center" }}>
+                <PowerSettingsNewIcon color="error" sx={{ fontSize: 17 }} />
               </IconButton>
 
               <Modal
@@ -208,7 +248,7 @@ function StatCard({ universalId, description, name, model, data, trend }) {
                   alignItems: "center",
                 }}
               >
-                <Card sx={{ height: "85%" }}>
+                <Card sx={{ height: "90%" }}>
                   <Box
                     sx={{
                       padding: "20px",
@@ -295,6 +335,29 @@ function StatCard({ universalId, description, name, model, data, trend }) {
                         value={formData.description || ""}
                         onChange={handleChange}
                       />
+                      <Typography
+                        id="modal-description"
+                        variant="h6"
+                        component="h2"
+                        mt={1}
+                      >
+                        Habitación
+                      </Typography>
+                      <TextField
+                        select
+                        id="room-input"
+                        label="Selecciona una habitación"
+                        name="room"
+                        fullWidth
+                        value={formData.roomId || ""}
+                        onChange={handleChangeRoomId}
+                      >
+                        {rooms?.map((room) => (
+                          <MenuItem key={room.id} value={room.id}>
+                            {room.name}
+                          </MenuItem>
+                        ))}
+                      </TextField>
 
                       <Button type="submit" variant="outlined" sx={{ mt: 2 }}>
                         Editar
@@ -326,6 +389,7 @@ StatCard.propTypes = {
   description: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   model: PropTypes.string.isRequired,
+  status: PropTypes.bool.isRequired,
   trend: PropTypes.oneOf(["down", "neutral", "up"]).isRequired,
 };
 

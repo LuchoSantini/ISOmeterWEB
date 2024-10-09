@@ -14,7 +14,7 @@ import SessionsChart from "./SessionsChart";
 import StatCard from "./StatCard";
 
 import api from "../../../Api/Api";
-import { allDevices } from "../../../Api/ApiServices";
+import { allDevices, postDatabase } from "../../../Api/ApiServices";
 import { CircularProgress, IconButton } from "@mui/material";
 import { GridArrowDownwardIcon, GridSaveAltIcon } from "@mui/x-data-grid";
 
@@ -75,6 +75,18 @@ export default function MainGrid() {
     fetchData();
   }, []);
 
+  const exportDatabase = async () => {
+    try {
+      await postDatabase({});
+      alert("Base de datos exportada a Excel.\nGuardada en Escritorio");
+      console.log("Base de datos exportada a Excel.");
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Box sx={{ width: "100%", maxWidth: { sm: "100%", md: "1700px" } }}>
       {/* cards */}
@@ -117,12 +129,12 @@ export default function MainGrid() {
         <SessionsChart />
       </Grid>
 
-      <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
+      <Box sx={{ display: "flex", justifyContent: "space-between", mt: 1.5 }}>
         <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
           Lista de Mediciones
         </Typography>
         {/* Agregar función de exportar */}
-        <IconButton>
+        <IconButton onClick={exportDatabase}>
           <GridSaveAltIcon></GridSaveAltIcon>
         </IconButton>
       </Box>

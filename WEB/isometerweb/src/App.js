@@ -10,7 +10,6 @@ const App = () => {
   return (
     <AppTheme disableCustomTheme={false}>
       {" "}
-      {/* Aplica el tema globalmente */}
       <Box
         sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
       >
@@ -21,7 +20,6 @@ const App = () => {
               <Route path="/login" element={<SignIn />} />
               <Route path="/register" element={<SignUp />} />
               <Route path="/home" element={<Dashboard />} />
-              {/* Agrega más rutas aquí */}
             </Routes>
           </Box>
         </BrowserRouter>
