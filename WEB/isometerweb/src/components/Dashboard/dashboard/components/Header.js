@@ -1,8 +1,8 @@
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Stack from "@mui/material/Stack";
-import IconButton from "@mui/material/IconButton"; // Importa IconButton de Material UI
-import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded"; // Importa el ícono de cerrar sesión
+import IconButton from "@mui/material/IconButton";
+import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import NavbarBreadcrumbs from "./NavbarBreadcrumbs";
 import ColorModeIconDropdown from "../../shared-theme/ColorModeIconDropdown";
 import { useNavigate } from "react-router-dom";
@@ -10,36 +10,29 @@ import {
   Box,
   Button,
   FormControl,
-  Link,
   MenuItem,
   Modal,
   TextField,
   Typography,
 } from "@mui/material";
-import {
-  GridAddIcon,
-  GridDragIcon,
-  GridLoadIcon,
-  GridMenuIcon,
-} from "@mui/x-data-grid";
-import { allRooms, postDevice } from "../../../Api/ApiServices";
-import AppTheme from "../../shared-theme/AppTheme";
+import { GridAddIcon } from "@mui/x-data-grid";
 import { Card } from "../../../Login/sign-in/SignIn";
+import usePostDevice from "../../../Hooks/PostData/usePostDevice";
+import useFetchRooms from "../../../Hooks/FetchData/useFetchRooms";
+
 export default function Header() {
   const [openModal, setOpenModal] = useState(false);
-  const [gettedRoomId, setGettedRoomId] = useState(null);
-  const [rooms, setRooms] = useState([]);
   const handleOpen = () => setOpenModal(true);
   const handleClose = () => setOpenModal(false);
-  const [loading, setLoading] = useState(false);
 
-  const [formData, setFormData] = useState({
-    universalId: null,
-    name: "",
-    model: "",
-    description: "",
-    roomId: null,
-  });
+  const { addDevice, formData, setFormData } = usePostDevice();
+  const { rooms } = useFetchRooms();
+
+  const navigate = useNavigate();
+  const logoutHandler = () => {
+    localStorage.setItem("isLoggedIn", "false");
+    navigate("/login");
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -47,53 +40,8 @@ export default function Header() {
 
   const handleChangeDevice = (e) => {
     const selectedRoomId = Number(e.target.value);
-    setFormData({ ...formData, roomId: selectedRoomId }); // Directly update formData
+    setFormData({ ...formData, roomId: selectedRoomId });
     console.log("Room seleccionado:", selectedRoomId);
-  };
-
-  const addDevice = async (e) => {
-    setLoading(true);
-    e.preventDefault();
-    try {
-      const response = await postDevice(formData);
-      setFormData({
-        universalId: "",
-        name: "",
-        model: "",
-        description: "",
-        roomId: "",
-      });
-      console.log(response);
-      alert("Se ha agregado un dispositivo nuevo.");
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchRooms = async () => {
-    setLoading(true);
-    try {
-      const roomsResponse = await allRooms();
-      setRooms(roomsResponse.data);
-      console.log(rooms.id);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchRooms();
-  }, []);
-
-  const navigate = useNavigate();
-
-  const logoutHandler = () => {
-    localStorage.setItem("isLoggedIn", "false");
-    navigate("/login");
   };
 
   return (
@@ -112,7 +60,7 @@ export default function Header() {
       <NavbarBreadcrumbs />
       <Box>
         <img
-          style={{ width: 100 }}
+          style={{ width: 150 }}
           src="/Logo-Consultar.png"
           alt="Logo Consultar"
         />
@@ -142,7 +90,7 @@ export default function Header() {
             alignItems: "center",
           }}
         >
-          <Card sx={{ height: "85%", flexGrow: 1 }}>
+          <Card sx={{ height: "auto", flexGrow: 1 }}>
             <Box
               sx={{
                 padding: "20px",
@@ -228,21 +176,6 @@ export default function Header() {
                     </MenuItem>
                   ))}
                 </TextField>
-                {/* <Typography id="modal-description" variant="h6" component="h2">
-                  Usuario
-                </Typography>
-                <TextField
-                  select
-                  id="user-input"
-                  label="Selecciona un usuario"
-                  type="number"
-                  name="userId"
-                  disabled
-                  value={formData.userId}
-                  onChange={handleChange}
-                >
-                  <MenuItem value={1}>Nombre Usuario</MenuItem>
-                </TextField> */}
                 <Button type="submit" variant="outlined" sx={{ mt: 2 }}>
                   Agregar Dispositivo
                 </Button>

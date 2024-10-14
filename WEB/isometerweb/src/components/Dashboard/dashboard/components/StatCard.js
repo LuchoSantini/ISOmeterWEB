@@ -248,7 +248,7 @@ function StatCard({ universalId, description, name, model, roomId, trend }) {
                   alignItems: "center",
                 }}
               >
-                <Card sx={{ height: "90%" }}>
+                <Card sx={{ height: "auto" }}>
                   <Box
                     sx={{
                       padding: "20px",

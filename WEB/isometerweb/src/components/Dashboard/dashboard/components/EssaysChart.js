@@ -6,119 +6,61 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import { LineChart } from "@mui/x-charts/LineChart";
 import dayjs from "dayjs";
-import {
-  allDevices,
-  allRooms,
-  getEssaysById,
-  measurementsById,
-} from "../../../Api/ApiServices";
 import { Box, CircularProgress, MenuItem, TextField } from "@mui/material";
+import useFetchDevices from "../../../Hooks/FetchData/useFetchDevices";
+import useFetchRooms from "../../../Hooks/FetchData/useFetchRooms";
+import useFetchEssays from "../../../Hooks/FetchData/useFetchEssays";
 
-export default function SessionsChart() {
+export default function EssaysChart() {
   const theme = useTheme();
-  const [devices, setDevices] = useState([]);
-  const [rooms, setRooms] = useState([]);
-  const [measurements, setMeasurements] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [gettedEssayId, setGettedEssayId] = useState(null);
 
-  const [gettedDeviceId, setGettedDeviceId] = useState(null);
-  const [gettedRoomId, setGettedRoomId] = useState(null);
-  const [gettedMeasurementId, setGettedMeasurementId] = useState(null);
+  const { devices, loading } = useFetchDevices();
+  const { rooms } = useFetchRooms();
+  const {
+    essays,
+    setGettedDeviceId,
+    setGettedRoomId,
+    gettedDeviceId,
+    gettedRoomId,
+  } = useFetchEssays();
 
-  const handleChange = (e) => {
+  const handleChangeDevice = (e) => {
     const selectedDeviceId = e.target.value;
     setGettedDeviceId(selectedDeviceId);
     console.log("Device seleccionado:", selectedDeviceId);
   };
 
-  const handleChangeDevice = (e) => {
+  const handleChangeRoom = (e) => {
     const selectedRoomId = e.target.value;
     setGettedRoomId(selectedRoomId);
-    console.log("Device seleccionado:", selectedRoomId);
+    console.log("Room seleccionado:", selectedRoomId);
   };
 
   const handleChangeMeasurement = (e) => {
-    const selectedMeasurementId = e.target.value;
-    setGettedMeasurementId(selectedMeasurementId);
-    console.log("Medición seleccionada:", selectedMeasurementId);
+    const selectedEssayId = e.target.value;
+    setGettedEssayId(selectedEssayId);
+    console.log("Ensayo seleccionada:", selectedEssayId);
   };
-
-  const fetchEssay = async (deviceId, roomId) => {
-    if (!deviceId) return;
-    setLoading(true);
-    try {
-      const measurementResponse = await getEssaysById(deviceId, roomId);
-      setMeasurements(measurementResponse.data);
-      console.log("Ensayos obtenidos:", measurementResponse.data);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (gettedDeviceId && gettedRoomId) {
-      fetchEssay(gettedDeviceId, gettedRoomId);
-    }
-  }, [gettedDeviceId, gettedRoomId]);
-
-  const fetchDevices = async () => {
-    setLoading(true);
-    try {
-      const deviceResponse = await allDevices();
-      setDevices(deviceResponse.data);
-      console.log(devices.id);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchDevices();
-  }, []);
-
-  const fetchRooms = async () => {
-    setLoading(true);
-    try {
-      const roomsResponse = await allRooms();
-      setRooms(roomsResponse.data);
-      console.log(rooms.id);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchRooms();
-  }, []);
 
   // Extract data for the chart
-  const filteredMeasurements = gettedMeasurementId
-    ? measurements.find((measurement) => measurement.id === gettedMeasurementId)
+  const filteredEssays = gettedEssayId
+    ? essays.find((measurement) => measurement.id === gettedEssayId)
     : null;
 
   // Extract data for the chart
-  const dates = filteredMeasurements
-    ? filteredMeasurements.measurements.map((measurement) =>
+  const dates = filteredEssays
+    ? filteredEssays.measurements.map((measurement) =>
         dayjs(measurement.changeDate).format("HH:mm")
       )
     : [];
 
-  const temperatures = filteredMeasurements
-    ? filteredMeasurements.measurements.map(
-        (measurement) => measurement.temperature
-      )
+  const temperatures = filteredEssays
+    ? filteredEssays.measurements.map((measurement) => measurement.temperature)
     : [];
 
-  const humidity = filteredMeasurements
-    ? filteredMeasurements.measurements.map(
-        (measurement) => measurement.humidity
-      )
+  const humidity = filteredEssays
+    ? filteredEssays.measurements.map((measurement) => measurement.humidity)
     : [];
 
   const colorPalette = {
@@ -146,7 +88,7 @@ export default function SessionsChart() {
             name="device"
             fullWidth
             value={gettedDeviceId || ""}
-            onChange={handleChange}
+            onChange={handleChangeDevice}
           >
             {devices?.map((device) => (
               <MenuItem key={device.id} value={device.id}>
@@ -161,7 +103,7 @@ export default function SessionsChart() {
             name="room"
             fullWidth
             value={gettedRoomId || ""}
-            onChange={handleChangeDevice}
+            onChange={handleChangeRoom}
           >
             {rooms?.map((room) => (
               <MenuItem key={room.id} value={room.id}>
@@ -174,11 +116,11 @@ export default function SessionsChart() {
             id="essay-input"
             label="Selecciona un ensayo"
             name="essay"
-            value={gettedMeasurementId || ""}
+            value={gettedEssayId || ""}
             onChange={handleChangeMeasurement}
             fullWidth
           >
-            {measurements?.map((measurement) => (
+            {essays?.map((measurement) => (
               <MenuItem key={measurement.id} value={measurement.id}>
                 {measurement.initDate}
               </MenuItem>
@@ -187,7 +129,7 @@ export default function SessionsChart() {
         </Box>
         {loading ? (
           <CircularProgress />
-        ) : measurements.length === 0 ? ( // Comprobamos si hay datos
+        ) : essays.length === 0 ? (
           <Typography
             variant="body2"
             color="text.primary"
@@ -203,7 +145,10 @@ export default function SessionsChart() {
               {
                 scaleType: "point",
                 data: dates,
-                //tickInterval: (index, i) => (i + 1) % 5 === 0,
+                // Cada dos horas, partiendo de la primer medición
+                tickInterval: (index, i) => i % 2 === 0,
+
+                // tickInterval: (index, i) => (i + 1) % 2 === 0,
               },
             ]}
             series={[

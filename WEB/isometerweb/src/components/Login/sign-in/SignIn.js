@@ -67,7 +67,7 @@ export default function SignIn(props) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false); // Estado para controlar si está cargando
+  const [loading, setLoading] = useState(false);
 
   const [errors, setErrors] = useState({
     email: false,
@@ -204,7 +204,7 @@ export default function SignIn(props) {
         <ColorModeSelect
           sx={{ position: "fixed", top: "1rem", right: "1rem" }}
         />
-        <Card variant="outlined">
+        <Card variant="outlined" sx={{ marginTop: "150px" }}>
           <Box display="flex" justifyContent="center">
             <img
               style={{ width: 250 }}
@@ -254,15 +254,6 @@ export default function SignIn(props) {
             <FormControl>
               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <FormLabel htmlFor="password">Contraseña</FormLabel>
-                {/* <Link
-                  component="button"
-                  type="button"
-                  onClick={handleClickOpen}
-                  variant="body2"
-                  sx={{ alignSelf: 'baseline' }}
-                >
-                  Forgot your password?
-                </Link> */}
               </Box>
               <TextField
                 value={password}

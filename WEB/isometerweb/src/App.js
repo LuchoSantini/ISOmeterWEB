@@ -9,7 +9,6 @@ import { Box } from "@mui/material";
 const App = () => {
   return (
     <AppTheme disableCustomTheme={false}>
-      {" "}
       <Box
         sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
       >
