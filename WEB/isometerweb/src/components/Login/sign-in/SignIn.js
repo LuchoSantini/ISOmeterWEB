@@ -19,9 +19,9 @@ import AppTheme from "../../Dashboard//shared-theme/AppTheme";
 import ColorModeSelect from "../../Dashboard/shared-theme/ColorModeSelect";
 
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { login } from "../../Api/ApiServices";
+import { useState } from "react";
 import { CircularProgress } from "@mui/material";
+import { AuthContext } from "../login-context/AuthProvider";
 export const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
@@ -69,6 +69,8 @@ export default function SignIn(props) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const { login } = React.useContext(AuthContext);
+
   const [errors, setErrors] = useState({
     email: false,
     password: false,
@@ -97,14 +99,6 @@ export default function SignIn(props) {
 
   const [alert, setAlert] = useState(null);
 
-  useEffect(() => {
-    const isLoggedIn = localStorage.getItem("isLoggedIn");
-
-    if (isLoggedIn === "true") {
-      navigate("/home"); // Si el usuario está autenticado, redirige a /home
-    }
-  }, [navigate]);
-
   const signInHandler = async (event) => {
     event.preventDefault();
 
@@ -121,8 +115,7 @@ export default function SignIn(props) {
       const success = await login(email, password);
 
       if (success) {
-        localStorage.setItem("isLoggedIn", "true");
-        navigate("/home");
+        navigate("/home"); // Si el usuario está autenticado, redirige a /home
 
         console.log("Se ha iniciado sesión exitosamente");
       } else {
@@ -142,11 +135,11 @@ export default function SignIn(props) {
     }
   };
 
-  const [emailError, setEmailError] = React.useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
-  const [passwordError, setPasswordError] = React.useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
-  const [open, setOpen] = React.useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [emailErrorMessage, setEmailErrorMessage] = useState("");
+  const [passwordError, setPasswordError] = useState(false);
+  const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
+  const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);

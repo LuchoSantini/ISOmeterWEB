@@ -35,7 +35,7 @@ export default function MainGrid() {
         >
           {devices?.map((card, index) => (
             <Grid key={index} size={{ xs: 12, sm: 6, lg: 3 }}>
-              <StatCard {...card} />
+              <StatCard {...card} trend={card.trend || "up"} />
             </Grid>
           ))}
         </Grid>

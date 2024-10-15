@@ -77,8 +77,8 @@ export function renderAvatar(params) {
 export const columns = [
   { field: "id", headerName: "ID", flex: 0.1, minWidth: 100 },
   {
-    field: "universalId",
-    headerName: "ID Universal",
+    field: "essayId",
+    headerName: "ID Ensayo",
     headerAlign: "left",
     align: "left",
     flex: 0.5,

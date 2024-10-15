@@ -13,7 +13,7 @@ const useFetchEssays = () => {
     try {
       const measurementResponse = await getEssaysById(deviceId, roomId);
       setEssays(measurementResponse.data);
-      console.log("Ensayos obtenidos:", measurementResponse.data);
+      console.log("Ensayos obtenidos:", measurementResponse);
     } catch (error) {
       console.log(error);
     } finally {
@@ -27,7 +27,15 @@ const useFetchEssays = () => {
     }
   }, [gettedDeviceId, gettedRoomId]);
 
-  return { essays, loading, setEssays, setGettedDeviceId, setGettedRoomId, gettedDeviceId, gettedRoomId };
+  return {
+    essays,
+    loading,
+    setEssays,
+    setGettedDeviceId,
+    setGettedRoomId,
+    gettedDeviceId,
+    gettedRoomId,
+  };
 };
 
 export default useFetchEssays;

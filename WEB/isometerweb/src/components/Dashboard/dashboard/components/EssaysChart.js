@@ -34,6 +34,7 @@ export default function EssaysChart() {
   const handleChangeRoom = (e) => {
     const selectedRoomId = e.target.value;
     setGettedRoomId(selectedRoomId);
+    setGettedEssayId(null);
     console.log("Room seleccionado:", selectedRoomId);
   };
 
@@ -115,21 +116,25 @@ export default function EssaysChart() {
             select
             id="essay-input"
             label="Selecciona un ensayo"
-            name="essay"
+            name="essays"
             value={gettedEssayId || ""}
             onChange={handleChangeMeasurement}
             fullWidth
+            disabled={!gettedRoomId}
           >
-            {essays?.map((measurement) => (
-              <MenuItem key={measurement.id} value={measurement.id}>
-                {measurement.initDate}
+            {essays?.map((essay) => (
+              <MenuItem key={essay.id} value={essay.id}>
+                {"ID: "}
+                {essay.id}
+                {" Fecha Inicio: "}
+                {essay.initDate}
               </MenuItem>
             ))}
           </TextField>
         </Box>
         {loading ? (
           <CircularProgress />
-        ) : essays.length === 0 ? (
+        ) : essays.length === 0 || gettedEssayId === null ? (
           <Typography
             variant="body2"
             color="text.primary"
@@ -137,7 +142,7 @@ export default function EssaysChart() {
             display="flex"
             justifyContent="center"
           >
-            No hay datos para mostrar, intenta seleccionar un dispositivo.
+            No hay datos para mostrar, intenta seleccionar un ensayo.
           </Typography>
         ) : (
           <LineChart
@@ -146,7 +151,7 @@ export default function EssaysChart() {
                 scaleType: "point",
                 data: dates,
                 // Cada dos horas, partiendo de la primer medición
-                tickInterval: (index, i) => i % 2 === 0,
+                //tickInterval: (index, i) => i % 2 === 0,
 
                 // tickInterval: (index, i) => (i + 1) % 2 === 0,
               },

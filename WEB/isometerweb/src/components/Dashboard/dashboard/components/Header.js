@@ -19,6 +19,7 @@ import { GridAddIcon } from "@mui/x-data-grid";
 import { Card } from "../../../Login/sign-in/SignIn";
 import usePostDevice from "../../../Hooks/PostData/usePostDevice";
 import useFetchRooms from "../../../Hooks/FetchData/useFetchRooms";
+import { AuthContext } from "../../../Login/login-context/AuthProvider";
 
 export default function Header() {
   const [openModal, setOpenModal] = useState(false);
@@ -29,8 +30,11 @@ export default function Header() {
   const { rooms } = useFetchRooms();
 
   const navigate = useNavigate();
+
+  const { logout } = React.useContext(AuthContext);
+
   const logoutHandler = () => {
-    localStorage.setItem("isLoggedIn", "false");
+    logout();
     navigate("/login");
   };
 
@@ -57,10 +61,13 @@ export default function Header() {
       }}
       spacing={2}
     >
+      {/* Puede servir para navegar entre distintas pantallas */}
+      {/* Podria darse de que al iniciar sesión lleve a un panel, luego el usuario elige a que sección ir.
+      En caso de elija determinada sección, poder permitir ir para atrás en modo de navegación*/}
       <NavbarBreadcrumbs />
       <Box>
         <img
-          style={{ width: 150 }}
+          style={{ width: 150, marginRight: "150px" }}
           src="/Logo-Consultar.png"
           alt="Logo Consultar"
         />
@@ -199,10 +206,10 @@ export default function Header() {
             width: "36px",
             height: "36px",
           }}
+          onClick={logoutHandler}
         >
           <LogoutRoundedIcon
             color="error"
-            onClick={logoutHandler}
             aria-label="Cerrar sesión"
             sx={{ fontSize: 17 }}
           />

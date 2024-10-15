@@ -13,19 +13,31 @@ export const allMeasurements = () => {
   return api.get("api/measurements");
 };
 
-export const allRooms = () => {
-  return api.get("api/rooms");
+export const allRooms = (token) => {
+  return api.get("api/rooms", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 export const getEssaysById = (deviceId, roomId) => {
   return api.get(`api/essay/${deviceId}/${roomId}`);
 };
+
 // POST
-export const login = (email, password) => {
-  return api.post("/api/login", {
-    Email: email,
-    Password: password,
-  });
+export const login = async (email, password) => {
+  try {
+    const response = await api.post("/api/login", {
+      Email: email,
+      Password: password,
+    });
+    console.log("Token: ", response.data.token);
+
+    return response.data;
+  } catch (error) {
+    throw error.response.data;
+  }
 };
 
 export const postRandomData = (universalId) => {

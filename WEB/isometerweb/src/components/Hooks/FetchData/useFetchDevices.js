@@ -10,9 +10,7 @@ const useFetchDevices = () => {
       setLoading(true);
       try {
         const deviceResponse = await allDevices();
-
         setDevices(deviceResponse.data);
-        console.log(devices);
       } catch (error) {
         console.log(error);
       } finally {

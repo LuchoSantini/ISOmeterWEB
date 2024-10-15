@@ -4,18 +4,14 @@ import { DataGrid } from "@mui/x-data-grid";
 import { columns, rows } from "../internals/data/gridData";
 
 import { allMeasurements } from "../../../Api/ApiServices";
-import { CircularProgress } from "@mui/material";
 
 export default function CustomizedDataGrid() {
   const [measurements, setmeasurements] = useState([]);
-  const [loading, setLoading] = useState(false);
-  console.log(measurements);
   const fetchData = async () => {
     try {
       const deviceResponse = await allMeasurements();
 
       setmeasurements(deviceResponse.data);
-      console.log(measurements);
     } catch (error) {
       console.log(error);
     } finally {

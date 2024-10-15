@@ -36,12 +36,13 @@ import {
   postRandomData,
   putDevice,
 } from "../../../Api/ApiServices";
+import useFetchRooms from "../../../Hooks/FetchData/useFetchRooms";
 
-function StatCard({ universalId, description, name, model, roomId, trend }) {
+function StatCard({ universalId, description, name, model, roomId }) {
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [rooms, setRooms] = useState([]);
   const [status, setStatus] = useState(); // Poner en true para simular
+  const { rooms } = useFetchRooms();
 
   const fetchDeviceStatus = async () => {
     try {
@@ -130,23 +131,6 @@ function StatCard({ universalId, description, name, model, roomId, trend }) {
     }
   };
 
-  const fetchRooms = async () => {
-    setLoading(true);
-    try {
-      const roomsResponse = await allRooms();
-      setRooms(roomsResponse.data);
-      console.log(rooms.id);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchRooms();
-  }, []);
-
   const theme = useTheme();
 
   const trendColors = {
@@ -170,8 +154,8 @@ function StatCard({ universalId, description, name, model, roomId, trend }) {
     neutral: "default",
   };
 
-  const color = labelColors[trend];
-  const chartColor = trendColors[trend];
+  // const color = labelColors[trend];
+  // const chartColor = trendColors[trend];
 
   return (
     <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
@@ -347,7 +331,7 @@ function StatCard({ universalId, description, name, model, roomId, trend }) {
                         select
                         id="room-input"
                         label="Selecciona una habitación"
-                        name="room"
+                        name="roomId"
                         fullWidth
                         value={formData.roomId || ""}
                         onChange={handleChangeRoomId}
